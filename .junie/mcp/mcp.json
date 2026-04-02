@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/hamedelasma/Library/Application Support/Herd/bin/php85",
+            "args": [
+                "/Users/hamedelasma/Herd/entra-sync/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
