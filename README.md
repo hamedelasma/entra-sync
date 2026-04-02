@@ -1,58 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# O3 Entra Sync
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sync users from Microsoft Entra ID (Azure AD) to your Laravel application's database via the Microsoft Graph API.
 
-## About Laravel
+## Installation
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Add the path repository to your app's `composer.json`:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```json
+"repositories": [
+    {"type": "path", "url": "../o3-entra-sync"}
+]
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Then require the package:
 
-## Contributing
+```bash
+composer require o3/entra-sync
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Setup
 
-## Code of Conduct
+### 1. Publish config and migration
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan vendor:publish --tag=entra-sync-config
+php artisan vendor:publish --tag=entra-sync-migrations
+php artisan migrate
+```
 
-## Security Vulnerabilities
+### 2. Environment variables
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Add to your `.env`:
+
+```env
+ENTRA_TENANT_ID=your-tenant-id
+ENTRA_CLIENT_ID=your-client-id
+ENTRA_CLIENT_SECRET=your-client-secret
+```
+
+### 3. Add trait to User model
+
+```php
+use O3\EntraSync\Models\Concerns\HasEntraSync;
+
+class User extends Authenticatable
+{
+    use HasEntraSync;
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
+}
+```
+
+### 4. Schedule the sync command
+
+In `routes/console.php`:
+
+```php
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('users:sync-from-entra')->daily();
+```
+
+## Azure / Entra Portal Setup
+
+1. Go to **App Registrations** in the Azure portal
+2. Select your app (or create a new one)
+3. Go to **API permissions** > **Add a permission**
+4. Select **Microsoft Graph** > **Application permissions**
+5. Add **User.Read.All**
+6. Click **Grant admin consent**
+
+## Usage
+
+### Sync command
+
+```bash
+# Run sync
+php artisan users:sync-from-entra
+
+# Preview changes without modifying the database
+php artisan users:sync-from-entra --dry-run
+```
+
+The command will:
+- **Create** users that exist in Entra but not in your database
+- **Update** existing users matched by `microsoft_id` (or `email` as fallback)
+- **Deactivate** users that have a `microsoft_id` but are no longer in Entra (`is_active = false`)
+
+### Trait scopes and helpers
+
+```php
+// Query scopes
+User::active()->get();       // where is_active = true
+User::fromEntra()->get();    // where microsoft_id is not null
+
+// Instance methods
+$user->isEntraUser();        // true if microsoft_id is set
+$user->deactivate();         // sets is_active = false
+```
+
+## Configuration
+
+The published config file (`config/entra-sync.php`) allows you to customize:
+
+- `tenant_id`, `client_id`, `client_secret` — Azure credentials
+- `user_model` — the Eloquent model class to sync to (default: `App\Models\User`)
+- `field_map` — mapping between local DB columns and Graph API fields
+
+## How it works
+
+- Uses **client credentials flow** (no user interaction required)
+- Authenticates via `POST https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token`
+- Fetches users from `GET https://graph.microsoft.com/v1.0/users`
+- Handles pagination automatically via `@odata.nextLink`
+- Caches the access token to minimize API calls
+- New users get a random password (authentication should be handled via Socialite SSO)
+- Logs warnings when email conflicts are detected (existing user with different `microsoft_id`)
+
+## Testing
+
+```bash
+vendor/bin/pest
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proprietary - O3 internal use only.
