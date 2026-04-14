@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use O3\EntraSync\Services\MicrosoftGraphService;
+use HamedElasma\EntraSync\Services\MicrosoftGraphService;
 
 beforeEach(function () {
     $this->service = new MicrosoftGraphService(

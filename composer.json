@@ -1,8 +1,8 @@
 {
-    "name": "o3/entra-sync",
+    "name": "hamedelasma/entra-sync",
     "description": "Sync users from Microsoft Entra ID to Laravel database",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^8.2",
         "illuminate/support": "^12.0 || ^13.0",
@@ -16,18 +16,18 @@
     },
     "autoload": {
         "psr-4": {
-            "O3\\EntraSync\\": "src/"
+            "HamedElasma\\EntraSync\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "O3\\EntraSync\\Tests\\": "tests/"
+            "HamedElasma\\EntraSync\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "O3\\EntraSync\\EntraSyncServiceProvider"
+                "HamedElasma\\EntraSync\\EntraSyncServiceProvider"
             ]
         }
     },

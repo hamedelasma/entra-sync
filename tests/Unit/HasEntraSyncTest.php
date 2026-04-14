@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use O3\EntraSync\Tests\Fixtures\User;
+use HamedElasma\EntraSync\Tests\Fixtures\User;
 
 it('scopes active users', function () {
     User::factory()->create(['is_active' => true]);

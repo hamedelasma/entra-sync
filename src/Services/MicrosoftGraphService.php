@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync\Services;
+namespace HamedElasma\EntraSync\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync\Tests;
+namespace HamedElasma\EntraSync\Tests;
 
-use O3\EntraSync\EntraSyncServiceProvider;
-use O3\EntraSync\Tests\Fixtures\User;
+use HamedElasma\EntraSync\EntraSyncServiceProvider;
+use HamedElasma\EntraSync\Tests\Fixtures\User;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase

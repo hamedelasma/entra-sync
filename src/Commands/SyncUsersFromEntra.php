@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync\Commands;
+namespace HamedElasma\EntraSync\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use O3\EntraSync\Services\MicrosoftGraphService;
+use HamedElasma\EntraSync\Services\MicrosoftGraphService;
 
 class SyncUsersFromEntra extends Command
 {

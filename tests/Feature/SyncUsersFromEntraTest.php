@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Http;
-use O3\EntraSync\Tests\Fixtures\User;
+use HamedElasma\EntraSync\Tests\Fixtures\User;
 
 function fakeTokenResponse(): void
 {

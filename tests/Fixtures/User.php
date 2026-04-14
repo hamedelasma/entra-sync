@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync\Tests\Fixtures;
+namespace HamedElasma\EntraSync\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use O3\EntraSync\Models\Concerns\HasEntraSync;
+use HamedElasma\EntraSync\Models\Concerns\HasEntraSync;
 
 class User extends Authenticatable
 {

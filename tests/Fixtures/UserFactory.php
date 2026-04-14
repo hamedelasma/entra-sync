@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync\Tests\Fixtures;
+namespace HamedElasma\EntraSync\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;

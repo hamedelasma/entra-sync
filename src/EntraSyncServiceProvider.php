@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync;
+namespace HamedElasma\EntraSync;
 
 use Illuminate\Support\ServiceProvider;
-use O3\EntraSync\Commands\SyncUsersFromEntra;
+use HamedElasma\EntraSync\Commands\SyncUsersFromEntra;
 
 class EntraSyncServiceProvider extends ServiceProvider
 {

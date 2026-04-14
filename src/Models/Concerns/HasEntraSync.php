@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace O3\EntraSync\Models\Concerns;
+namespace HamedElasma\EntraSync\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 

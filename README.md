@@ -1,4 +1,4 @@
-# O3 Entra Sync
+# Entra Sync
 
 Sync users from Microsoft Entra ID (Azure AD) to your Laravel application's database via the Microsoft Graph API.
 
@@ -8,14 +8,14 @@ Add the path repository to your app's `composer.json`:
 
 ```json
 "repositories": [
-    {"type": "path", "url": "../o3-entra-sync"}
+    {"type": "path", "url": "../entra-sync"}
 ]
 ```
 
 Then require the package:
 
 ```bash
-composer require o3/entra-sync
+composer require hamedelasma/entra-sync
 ```
 
 ## Setup
@@ -41,7 +41,7 @@ ENTRA_CLIENT_SECRET=your-client-secret
 ### 3. Add trait to User model
 
 ```php
-use O3\EntraSync\Models\Concerns\HasEntraSync;
+use HamedElasma\EntraSync\Models\Concerns\HasEntraSync;
 
 class User extends Authenticatable
 {
@@ -130,4 +130,4 @@ vendor/bin/pest
 
 ## License
 
-Proprietary - O3 internal use only.
+MIT
